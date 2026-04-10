@@ -10,15 +10,15 @@ const pctFromLevel = (levelCm, maxCm) => {
 export default function EsquemaBalsasIndustrial({ data = ejemploDatos }) {
   // Mapeo de sensores a actuadores
   const ACTUADORES = {
-    bomba: 2,
-    ev1: 3,
-    ev2: 4,
-    ev3: 5
+    bomba: 1,
+    ev1: 2,
+    ev2: 3,
+    ev3: 4
   };
 
   // Mapeo de sensores de nivel
   const SENSORES_NIVEL = {
-    mainTank: 1, // Balsa general
+    mainTank: 5, // Balsa general
     b1: 6,       // Balsa 1
     b2: 7,       // Balsa 2
     b3: 8        // Balsa 3
