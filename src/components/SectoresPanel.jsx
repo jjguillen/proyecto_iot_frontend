@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { sectorService } from '../api/apiservice.jsx';
 import { AlertCircle, MapPin, Leaf, Grid3x3 } from 'lucide-react';
 
 export default function SectoresPanel() {
+    const navigate = useNavigate();
     const [sectores, setSectores] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -114,7 +116,10 @@ export default function SectoresPanel() {
                         </div>
 
                         {/* Botón de acción */}
-                        <button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded transition-colors">
+                        <button
+                            onClick={() => navigate(`/sector/${sector.id}`)}
+                            className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded transition-colors"
+                        >
                             Ver detalles
                         </button>
                     </div>
