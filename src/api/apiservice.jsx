@@ -54,16 +54,16 @@ export const sensorService = {
         }
     },
 
-    // Modificar estado de un sensor de tipo ACTUADOR
-    updateActuadorState: async (sensorId, estado) => {
+    // Solicita al backend la decision de automatizacion y aplica las acciones resultantes.
+    decideActuatorState: async (actuadorId, targetState) => {
         try {
-            //console.log(sensorId, estado);
-            const response = await api.put(`/sensors/${sensorId}`, {
-                estado: estado
+            const response = await api.post('/automatizaciones/actuadores/decidir', {
+                actuadorId,
+                targetState
             });
             return response.data;
         } catch (error) {
-            console.error(`Error updating sensor state ${sensorId}:`, error);
+            console.error(`Error deciding actuator state ${actuadorId}:`, error);
             throw error;
         }
     },

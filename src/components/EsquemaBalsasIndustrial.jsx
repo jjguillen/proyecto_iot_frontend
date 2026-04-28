@@ -8,7 +8,7 @@ const pctFromLevel = (levelCm, maxCm) => {
 };
 
 export default function EsquemaBalsasIndustrial({ data = ejemploDatos }) {
-  // Mapeo de sensores a actuadores
+  // Mapeo de actuadores (ids fijos en BBDD)
   const ACTUADORES = {
     bomba: 1,
     ev1: 2,
@@ -18,10 +18,10 @@ export default function EsquemaBalsasIndustrial({ data = ejemploDatos }) {
 
   // Mapeo de sensores de nivel
   const SENSORES_NIVEL = {
-    mainTank: 5, // Balsa general
-    b1: 6,       // Balsa 1
-    b2: 7,       // Balsa 2
-    b3: 8        // Balsa 3
+    mainTank: 5,
+    b1: 6,
+    b2: 7,
+    b3: 8
   };
 
   const [state, setState] = useState({
@@ -135,26 +135,67 @@ export default function EsquemaBalsasIndustrial({ data = ejemploDatos }) {
     }
   };
 
+  const applyAutomationActions = (actions = []) => {
+    const keyBySensorId = {
+      [ACTUADORES.bomba]: 'pump',
+      [ACTUADORES.ev1]: 'ev1',
+      [ACTUADORES.ev2]: 'ev2',
+      [ACTUADORES.ev3]: 'ev3'
+    };
+
+    setState((prev) => {
+      const next = { ...prev };
+      actions.forEach((action) => {
+        const key = keyBySensorId[action.actuadorId];
+        if (!key || !next[key]) return;
+        next[key] = { ...next[key], estado: action.state === 'ARRANCADO' };
+      });
+      return next;
+    });
+  };
+
   const handlePumpToggle = async (newValue) => {
     try {
-      const nuevoEstado = newValue ? 'ARRANCADO' : 'PARADO';
-      await sensorService.updateActuadorState(ACTUADORES.bomba, nuevoEstado);
-      setState({ ...state, pump: { ...state.pump, estado: newValue } });
+      const targetState = newValue ? 'ARRANCADO' : 'PARADO';
+      const decision = await sensorService.decideActuatorState(ACTUADORES.bomba, targetState);
+
+      if (!decision?.allowed) {
+        window.alert(decision?.reason || 'Accion no permitida por reglas de automatizacion');
+        return;
+      }
+
+      applyAutomationActions(decision.actions || []);
       setPopup({ visible: false });
     } catch (error) {
-      console.error('Error updating pump:', error);
+      const reason = error?.response?.data?.reason;
+      if (reason) {
+        window.alert(reason);
+      } else {
+        console.error('Error updating pump:', error);
+      }
     }
   };
 
   const handleValveToggle = async (valveId, newValue) => {
     try {
       const sensorId = ACTUADORES[valveId];
-      const nuevoEstado = newValue ? 'ARRANCADO' : 'PARADO';
-      await sensorService.updateActuadorState(sensorId, nuevoEstado);
-      setState({ ...state, [valveId]: { ...state[valveId], estado: newValue } });
+      const targetState = newValue ? 'ARRANCADO' : 'PARADO';
+      const decision = await sensorService.decideActuatorState(sensorId, targetState);
+
+      if (!decision?.allowed) {
+        window.alert(decision?.reason || 'Accion no permitida por reglas de automatizacion');
+        return;
+      }
+
+      applyAutomationActions(decision.actions || []);
       setPopup({ visible: false });
     } catch (error) {
-      console.error(`Error updating ${valveId}:`, error);
+      const reason = error?.response?.data?.reason;
+      if (reason) {
+        window.alert(reason);
+      } else {
+        console.error(`Error updating ${valveId}:`, error);
+      }
     }
   };
 
@@ -475,12 +516,4 @@ export default function EsquemaBalsasIndustrial({ data = ejemploDatos }) {
   );
 }
 
-export const ejemploDatos = {
-  mainTank: { distanceCm: 72, maxDistanceCm: 100 },
-  tanks: {
-    b1: { distanceCm: 45, maxDistanceCm: 100 },
-    b2: { distanceCm: 18, maxDistanceCm: 100 },
-    b3: { distanceCm: 61, maxDistanceCm: 100 }
-  },
-  valves: { ev1Open: true, ev2Open: false, ev3Open: true }
-};
+

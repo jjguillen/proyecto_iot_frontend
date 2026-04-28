@@ -8,7 +8,6 @@ const LEVEL_SENSOR_BY_SECTOR = {
 };
 
 const SCADA_IDS_BY_SECTOR = {
-  // TODO: Rellenar con IDs reales por sector cuando esten creados en BBDD.
   2: { pump: 9, flow: 12, pressure: 13, valveA: 10, humidityA: 14, valveB: 11, humidityB: 15 },
   3: { pump: 16, flow: 19, pressure: 20, valveA: 17, humidityA: 21, valveB: 18, humidityB: 22 },
   4: { pump: 23, flow: 26, pressure: 27, valveA: 24, humidityA: 28, valveB: 25, humidityB: 29 }
@@ -201,6 +200,39 @@ export default function SectorScadaIndustrial({ sector }) {
   const popupReading = popup.nodeKey ? readingByNode[popup.nodeKey] : null;
   const popupActuatorState = popup.nodeKey ? actuatorStateByNode[popup.nodeKey] : null;
 
+  const actuatorNodeKeys = ['pump', 'valveA', 'valveB'];
+
+  const applyAutomationActions = (actions = []) => {
+    const keyBySensorId = actuatorNodeKeys.reduce((acc, key) => {
+      const id = nodeSensorIds[key];
+      if (id) acc[id] = key;
+      return acc;
+    }, {});
+
+    setScada((prev) => {
+      const next = { ...prev };
+      actions.forEach((action) => {
+        const nodeKey = keyBySensorId[action.actuadorId];
+        if (!nodeKey) return;
+        const on = isOn(action.state);
+        if (nodeKey === 'pump') next.pumpOn = on;
+        if (nodeKey === 'valveA') next.valveAOn = on;
+        if (nodeKey === 'valveB') next.valveBOn = on;
+      });
+      return next;
+    });
+
+    setSensorInfo((prev) => {
+      const next = { ...prev };
+      actions.forEach((action) => {
+        const nodeKey = keyBySensorId[action.actuadorId];
+        if (!nodeKey || !next[nodeKey]) return;
+        next[nodeKey] = { ...next[nodeKey], estado: action.state };
+      });
+      return next;
+    });
+  };
+
   const handleActuatorToggle = async (newValue) => {
     if (!popup.nodeKey) return;
 
@@ -209,24 +241,22 @@ export default function SectorScadaIndustrial({ sector }) {
 
     try {
       setActionLoading(true);
-      const estado = newValue ? 'ARRANCADO' : 'PARADO';
-      await sensorService.updateActuadorState(sensorId, estado);
+      const targetState = newValue ? 'ARRANCADO' : 'PARADO';
+      const decision = await sensorService.decideActuatorState(sensorId, targetState);
 
-      setScada((prev) => {
-        if (popup.nodeKey === 'pump') return { ...prev, pumpOn: newValue };
-        if (popup.nodeKey === 'valveA') return { ...prev, valveAOn: newValue };
-        if (popup.nodeKey === 'valveB') return { ...prev, valveBOn: newValue };
-        return prev;
-      });
+      if (!decision?.allowed) {
+        window.alert(decision?.reason || 'Accion no permitida por reglas de automatizacion');
+        return;
+      }
 
-      setSensorInfo((prev) => ({
-        ...prev,
-        [popup.nodeKey]: prev[popup.nodeKey]
-          ? { ...prev[popup.nodeKey], estado }
-          : prev[popup.nodeKey]
-      }));
+      applyAutomationActions(decision.actions || []);
     } catch (error) {
-      console.error('Error actualizando actuador:', error);
+      const reason = error?.response?.data?.reason;
+      if (reason) {
+        window.alert(reason);
+      } else {
+        console.error('Error actualizando actuador:', error);
+      }
     } finally {
       setActionLoading(false);
     }
