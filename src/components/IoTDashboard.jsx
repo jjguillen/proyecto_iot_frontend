@@ -1,7 +1,7 @@
 // Componente Principal
 import { Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import EsquemaBalsasIndustrial, { ejemploDatos } from "./EsquemaBalsasIndustrial.jsx";
+import EsquemaBalsasIndustrial from "./EsquemaBalsasIndustrial.jsx";
 import SectoresPanel from "./SectoresPanel.jsx";
 
 // Datos fijos para la predicción del tiempo (3 días)
@@ -55,7 +55,7 @@ export default function IoTDashboard() {
                     <h2 className="text-xl font-semibold text-white mb-2">Esquema de Balsas Industriales</h2>
                     <p className="text-slate-400">Visualización en tiempo real del sistema de riego</p>
                 </div>
-                <EsquemaBalsasIndustrial data={ejemploDatos} />
+                <EsquemaBalsasIndustrial />
                 <SectoresPanel />
             </main>
         </div>

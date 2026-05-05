@@ -7,7 +7,7 @@ const pctFromLevel = (levelCm, maxCm) => {
   return clamp((levelCm / maxCm) * 100, 0, 100);
 };
 
-export default function EsquemaBalsasIndustrial({ data = ejemploDatos }) {
+export default function EsquemaBalsasIndustrial() {
   // Mapeo de actuadores (ids fijos en BBDD)
   const ACTUADORES = {
     bomba: 1,
@@ -215,6 +215,11 @@ export default function EsquemaBalsasIndustrial({ data = ejemploDatos }) {
 
   return (
     <div style={{ position: 'relative', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', minHeight: '18px', marginBottom: '4px' }}>
+        {loading && (
+          <span style={{ fontSize: '11px', color: '#888', fontStyle: 'italic' }}>Actualizando...</span>
+        )}
+      </div>
       <style>{`
         .scada-lbl { font-family: sans-serif; font-size: 11px; fill: #2C2C2A; }
         .scada-lbl-sm { font-family: sans-serif; font-size: 10px; fill: #5F5E5A; }
