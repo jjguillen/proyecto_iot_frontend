@@ -42,7 +42,7 @@ async function safeGetReading(sensorId) {
 }
 
 const SENSOR_POPUP_CONFIG = {
-  tank: { title: 'Sensor nivel balsa', unit: 'cm', digits: 1 },
+  tank: { title: 'Sensor nivel balsa', unit: '%', digits: 1 },
   flow: { title: 'Sensor caudal', unit: 'L/min', digits: 1 },
   pressure: { title: 'Sensor presion', unit: 'bar', digits: 2 },
   humidityA: { title: 'Sensor humedad ramal 1', unit: '%', digits: 1 },
@@ -302,7 +302,7 @@ export default function SectorScadaIndustrial({ sector }) {
           <g className="scada-hov" onClick={() => openPopup('tank')}>
             <line x1="110" y1="125" x2="110" y2="95" className="scada-sig" />
             <rect x="70" y="74" width="80" height="18" rx="4" fill="#EAF3DE" stroke="#639922" strokeWidth="0.8" />
-            <text className="scada-val-ok" x="110" y="86" textAnchor="middle">{fmt(scada.tankLevel, 1, 'cm')}</text>
+            <text className="scada-val-ok" x="110" y="86" textAnchor="middle">{fmt(scada.tankLevel, 1, '%')}</text>
           </g>
 
           <line x1="180" y1="216" x2="250" y2="216" className="scada-pipe" />

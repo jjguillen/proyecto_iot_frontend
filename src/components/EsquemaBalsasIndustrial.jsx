@@ -7,6 +7,12 @@ const pctFromLevel = (levelCm, maxCm) => {
   return clamp((levelCm / maxCm) * 100, 0, 100);
 };
 
+const formatCm = (value) => {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return '0.00';
+  return numeric.toFixed(2);
+};
+
 export default function EsquemaBalsasIndustrial() {
   // Mapeo de actuadores (ids fijos en BBDD)
   const ACTUADORES = {
@@ -266,7 +272,7 @@ export default function EsquemaBalsasIndustrial() {
           <path d="M103,101 Q110,107 117,101" fill="none" stroke="#185FA5" strokeWidth="0.6" strokeLinecap="round" opacity="0.5"/>
           <line x1="110" y1="80" x2="110" y2="52" className="scada-sig"/>
           <rect x="78" y="38" width="64" height="18" rx="4" fill="#EAF3DE" stroke="#639922" strokeWidth="0.8"/>
-          <text className="scada-val-ok" x="110" y="50" textAnchor="middle">{sensorData.mainTank.distanceCm} cm</text>
+          <text className="scada-val-ok" x="110" y="50" textAnchor="middle">{formatCm(sensorData.mainTank.distanceCm)} %</text>
           <text className="scada-lbl-sm" x="110" y="28" textAnchor="middle">Sensor nivel US</text>
         </g>
 
@@ -323,7 +329,7 @@ export default function EsquemaBalsasIndustrial() {
           <path d="M526,50 Q530,55 534,50" fill="none" stroke="#185FA5" strokeWidth="1" strokeLinecap="round"/>
           <line x1="530" y1="34" x2="530" y2="16" className="scada-sig"/>
           <rect x="498" y="4" width="64" height="16" rx="3" fill={sensorData.tanks.b1.distanceCm < 25 ? '#FAEEDA' : '#EAF3DE'} stroke={sensorData.tanks.b1.distanceCm < 25 ? '#BA7517' : '#639922'} strokeWidth="0.8"/>
-          <text className={sensorData.tanks.b1.distanceCm < 25 ? 'scada-val-warn' : 'scada-val-ok'} x="530" y="16" textAnchor="middle">{sensorData.tanks.b1.distanceCm} cm</text>
+          <text className={sensorData.tanks.b1.distanceCm < 25 ? 'scada-val-warn' : 'scada-val-ok'} x="530" y="16" textAnchor="middle">{formatCm(sensorData.tanks.b1.distanceCm)} %</text>
         </g>
 
         {/* RAMAL 2 */}
@@ -355,7 +361,7 @@ export default function EsquemaBalsasIndustrial() {
           <path d="M526,190 Q530,195 534,190" fill="none" stroke="#185FA5" strokeWidth="1" strokeLinecap="round"/>
           <line x1="530" y1="174" x2="530" y2="156" className="scada-sig"/>
           <rect x="498" y="144" width="64" height="16" rx="3" fill={sensorData.tanks.b2.distanceCm < 25 ? '#FAEEDA' : '#EAF3DE'} stroke={sensorData.tanks.b2.distanceCm < 25 ? '#BA7517' : '#639922'} strokeWidth="0.8"/>
-          <text className={sensorData.tanks.b2.distanceCm < 25 ? 'scada-val-warn' : 'scada-val-ok'} x="530" y="155" textAnchor="middle">{sensorData.tanks.b2.distanceCm} cm</text>
+          <text className={sensorData.tanks.b2.distanceCm < 25 ? 'scada-val-warn' : 'scada-val-ok'} x="530" y="155" textAnchor="middle">{formatCm(sensorData.tanks.b2.distanceCm)} %</text>
         </g>
 
         {/* RAMAL 3 */}
@@ -387,7 +393,7 @@ export default function EsquemaBalsasIndustrial() {
           <path d="M526,330 Q530,335 534,330" fill="none" stroke="#185FA5" strokeWidth="1" strokeLinecap="round"/>
           <line x1="530" y1="314" x2="530" y2="296" className="scada-sig"/>
           <rect x="498" y="284" width="64" height="16" rx="3" fill={sensorData.tanks.b3.distanceCm < 25 ? '#FAEEDA' : '#EAF3DE'} stroke={sensorData.tanks.b3.distanceCm < 25 ? '#BA7517' : '#639922'} strokeWidth="0.8"/>
-          <text className={sensorData.tanks.b3.distanceCm < 25 ? 'scada-val-warn' : 'scada-val-ok'} x="530" y="295" textAnchor="middle">{sensorData.tanks.b3.distanceCm} cm</text>
+          <text className={sensorData.tanks.b3.distanceCm < 25 ? 'scada-val-warn' : 'scada-val-ok'} x="530" y="295" textAnchor="middle">{formatCm(sensorData.tanks.b3.distanceCm)} %</text>
         </g>
 
         {/* LEYENDA */}
@@ -480,7 +486,7 @@ export default function EsquemaBalsasIndustrial() {
                 <div style={{ marginBottom: '14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '10px' }}>
                     <span style={{ fontSize: '28px', fontWeight: 500, color: (popup.id === 'bp' ? sensorData.mainTank : sensorData.tanks[popup.id])?.distanceCm < 25 ? '#854F0B' : '#3B6D11' }}>
-                      {(popup.id === 'bp' ? sensorData.mainTank : sensorData.tanks[popup.id])?.distanceCm} <span style={{ fontSize: '14px', fontWeight: 400, color: '#888' }}>cm</span>
+                      {formatCm((popup.id === 'bp' ? sensorData.mainTank : sensorData.tanks[popup.id])?.distanceCm)} <span style={{ fontSize: '14px', fontWeight: 400, color: '#888' }}>%</span>
                     </span>
                     <span style={{ fontSize: '12px', padding: '3px 10px', borderRadius: '20px', background: (popup.id === 'bp' ? sensorData.mainTank : sensorData.tanks[popup.id])?.distanceCm < 25 ? '#FAEEDA' : '#EAF3DE', color: (popup.id === 'bp' ? sensorData.mainTank : sensorData.tanks[popup.id])?.distanceCm < 25 ? '#854F0B' : '#3B6D11', fontWeight: 600 }}>
                       {(popup.id === 'bp' ? sensorData.mainTank : sensorData.tanks[popup.id])?.distanceCm < 25 ? 'ALERTA' : 'NORMAL'}
@@ -491,7 +497,7 @@ export default function EsquemaBalsasIndustrial() {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#888' }}>
                     <span style={{ fontWeight: 600, color: (popup.id === 'bp' ? sensorData.mainTank : sensorData.tanks[popup.id])?.distanceCm < 25 ? '#BA7517' : '#639922' }}>{Math.round(((popup.id === 'bp' ? sensorData.mainTank.distanceCm : sensorData.tanks[popup.id].distanceCm) / (popup.id === 'bp' ? sensorData.mainTank.maxDistanceCm : sensorData.tanks[popup.id].maxDistanceCm)) * 100)}%</span>
-                    <span>Máx {popup.id === 'bp' ? sensorData.mainTank.maxDistanceCm : sensorData.tanks[popup.id].maxDistanceCm} cm</span>
+                    <span>Máx {popup.id === 'bp' ? sensorData.mainTank.maxDistanceCm : sensorData.tanks[popup.id].maxDistanceCm} %</span>
                   </div>
                 </div>
                 <div style={{ borderTop: '0.5px solid #e0e0e0', paddingTop: '10px' }}>
