@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { sensorService } from '../api/apiservice.jsx';
+import AutomationToggle from './AutomationToggle.jsx';
 
 const LEVEL_SENSOR_BY_SECTOR = {
   2: 6,
@@ -264,9 +265,12 @@ export default function SectorScadaIndustrial({ sector }) {
 
   return (
     <div className="w-full">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex items-center justify-between flex-wrap gap-2">
         <h3 className="text-base font-semibold text-white">Esquema {sector?.nombre || 'del sector'}</h3>
-        <span className="text-xs text-slate-400">{loading ? 'Actualizando...' : 'Actualizado'}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <AutomationToggle showNivel={false} showHumedad={true} />
+          <span className="text-xs text-slate-400">{loading ? 'Actualizando...' : 'Actualizado'}</span>
+        </div>
       </div>
 
       <div className="rounded-lg border border-slate-700 bg-slate-900/30 p-3">

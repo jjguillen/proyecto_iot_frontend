@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { sensorService } from '../api/apiservice.jsx';
+import AutomationToggle from './AutomationToggle.jsx';
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const pctFromLevel = (levelCm, maxCm) => {
@@ -221,7 +222,8 @@ export default function EsquemaBalsasIndustrial() {
 
   return (
     <div style={{ position: 'relative', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', minHeight: '18px', marginBottom: '4px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', minHeight: '24px', marginBottom: '6px' }}>
+        <AutomationToggle showNivel={true} showHumedad={false} />
         {loading && (
           <span style={{ fontSize: '11px', color: '#888', fontStyle: 'italic' }}>Actualizando...</span>
         )}

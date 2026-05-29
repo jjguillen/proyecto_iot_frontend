@@ -80,6 +80,27 @@ export const sensorService = {
     },
 };
 
+// Servicios de configuración de automatizaciones
+export const configuracionService = {
+    /** Devuelve { nivelEnabled, humedadEnabled } */
+    getConfig: async () => {
+        const response = await api.get('/automatizaciones/config');
+        return response.data;
+    },
+
+    /** Activa/desactiva la automatización de nivel de balsas */
+    setNivel: async (enabled) => {
+        const response = await api.put('/automatizaciones/config/nivel', null, { params: { enabled } });
+        return response.data;
+    },
+
+    /** Activa/desactiva la automatización de riego por humedad */
+    setHumedad: async (enabled) => {
+        const response = await api.put('/automatizaciones/config/humedad', null, { params: { enabled } });
+        return response.data;
+    },
+};
+
 // Servicios para sectores
 export const sectorService = {
     // Obtener los sectores con IDs 2, 3 y 4
